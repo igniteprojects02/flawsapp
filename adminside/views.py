@@ -81,25 +81,34 @@ class PublishedCoursesAPIView(APIView):
         return Response({'published': serializer.data}, status=status.HTTP_200_OK)
 
 
+from bson import ObjectId
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Course
+from .serializers import CourseSerializer
+
 class DeleteCourseAPIView(APIView):
     """
-    API view to delete a course by ID.
+    API view to delete a course by MongoDB ObjectId.
     """
     def delete(self, request, pk):
         try:
-            course = Course.objects.get(pk=pk)  # Fetch the course by primary key
+            course = Course.objects.get(_id=ObjectId(pk))  # Fetch the course by ObjectId
             course.delete()  # Delete the course
-            return Response({'message': 'Course deleted successfully'}, status=status.HTTP_200_OK)  # Change to 200 OK
+            return Response({'message': 'Course deleted successfully'}, status=status.HTTP_200_OK)
         except Course.DoesNotExist:
             return Response({'detail': 'Course not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class UpdateCourseAPIView(APIView):
     """
-    API view to update a course by ID.
+    API view to update a course by MongoDB ObjectId.
     """
     def put(self, request, pk):
         try:
-            course = Course.objects.get(pk=pk)  # Fetch course by ID
+            course = Course.objects.get(_id=ObjectId(pk))  # Fetch course by ObjectId
             serializer = CourseSerializer(course, data=request.data)  # Replace all data
             if serializer.is_valid():
                 serializer.save()
@@ -107,10 +116,12 @@ class UpdateCourseAPIView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Course.DoesNotExist:
             return Response({'detail': 'Course not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request, pk):
         try:
-            course = Course.objects.get(pk=pk)  # Fetch course by ID
+            course = Course.objects.get(_id=ObjectId(pk))  # Fetch course by ObjectId
             serializer = CourseSerializer(course, data=request.data, partial=True)  # Update only provided fields
             if serializer.is_valid():
                 serializer.save()
@@ -118,6 +129,9 @@ class UpdateCourseAPIView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Course.DoesNotExist:
             return Response({'detail': 'Course not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
         
 class CourseList(generics.ListAPIView):
     queryset = Course.objects.all()
@@ -135,10 +149,20 @@ class CourseList(generics.ListAPIView):
     
 
 
+from bson import ObjectId
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Course
+
 class ToggleCourseStatusAPIView(APIView):
+    """
+    API view to toggle the course status by MongoDB ObjectId.
+    """
     def post(self, request, pk):
         try:
-            course = Course.objects.get(pk=pk)
+            course = Course.objects.get(_id=ObjectId(pk))  # Fetch course by ObjectId
+            # Toggle the status
             if course.status == Course.DRAFT:
                 course.status = Course.PUBLISHED
             else:
@@ -147,6 +171,9 @@ class ToggleCourseStatusAPIView(APIView):
             return Response({'message': f'Course status changed to {course.status}'}, status=status.HTTP_200_OK)
         except Course.DoesNotExist:
             return Response({'error': 'Course not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
         
 
 

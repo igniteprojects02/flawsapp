@@ -153,10 +153,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 from datetime import timedelta
 
 
-JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
+
 
 SIMPLE_JWT = {
-    'SIGNING_KEY': JWT_SECRET_KEY,
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }

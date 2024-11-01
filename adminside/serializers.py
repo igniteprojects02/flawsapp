@@ -6,10 +6,15 @@ class UserLoginSerializer(serializers.Serializer):
     password = serializers.CharField(style={'input_type': 'password'})
 
 
+from rest_framework import serializers
+from .models import Course
+
 class CourseSerializer(serializers.ModelSerializer):
+    object_id = serializers.SerializerMethodField()
+
     class Meta:
         model = Course
-        fields = ['title', 'course_code', 'university', 'description', 'file', 'status']
+        fields = ['object_id', 'title', 'course_code', 'university', 'description', 'file', 'status']
         extra_kwargs = {
             'title': {'required': True},
             'course_code': {'required': True},
@@ -17,6 +22,9 @@ class CourseSerializer(serializers.ModelSerializer):
             'description': {'required': True},
             'status': {'required': True}, 
         }
-    def get_status(self, obj):
-        return obj.status  
+
+    def get_object_id(self, obj):
+        # Convert the ObjectId to a string
+        return str(obj._id)
+
 

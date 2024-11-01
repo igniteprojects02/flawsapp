@@ -7,9 +7,9 @@ from django.conf import settings
 urlpatterns = [
     path('login/', LoginAPIView.as_view(), name='login'), 
     path('add-course/', AddCourseAPIView.as_view(), name='add-course'),
-    path('delete-course/<int:pk>/', DeleteCourseAPIView.as_view(), name='delete-course'),
-    path('update-course/<int:pk>/', UpdateCourseAPIView.as_view(), name='update-course'),
-    path('api/toggle-course-status/<int:pk>/', ToggleCourseStatusAPIView.as_view(), name='toggle-course-status'),
+    path('delete-course/<str:pk>/', DeleteCourseAPIView.as_view(), name='delete-course'),
+    path('update-course/<str:pk>/', UpdateCourseAPIView.as_view(), name='update-course'),
+    path('api/toggle-course-status/<str:pk>/', ToggleCourseStatusAPIView.as_view(), name='toggle-course-status'),
 
     # path('draft/<int:course_id>/', DraftCourseView.as_view(), name='draft_course'),
     path('courses/', CourseList.as_view(), name='course-list'),
